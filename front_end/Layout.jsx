@@ -1,37 +1,84 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import {Row,Col} from 'react-bootstrap';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Row, Col } from "react-bootstrap";
 
 export default class Layout extends Component {
-    static propTypes = {
-        children: PropTypes.node.isRequired
-    }
+  static propTypes = {
+    children: PropTypes.node.isRequired
+  };
 
-    render() {
-        return (
-            <div className="container">
-              <div className="header clearfix">
-                <nav>
-                  <ul className="nav nav-pills pull-right">
-                    <li role="presentation" className="active"><a href="#">Home</a></li>
-                    <li role="presentation"><a href="#">About</a></li>
-                    <li role="presentation"><a href="#">Contact</a></li>
-                  </ul>
-                </nav>
-                <h3 className="text-muted">Project name</h3>
-              </div>
-
-              <Row className="marketing">
-                <Col xs={12}>
-                    {this.props.children}
-                </Col>
-              </Row>
-
-              <footer className="footer">
-                <p>&copy; 2016 Company, Inc.</p>
-              </footer>
-
+  render() {
+    return (
+      <React.Fragment>
+        <nav className="navbar navbar-default navbar-fixed-top">
+          <div className="container">
+            <div className="navbar-header">
+              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#navbar" aria-expanded="false" aria-controls="navbar" >
+                <span className="sr-only">Toggle navigation</span>
+                <span className="icon-bar" />
+                <span className="icon-bar" />
+                <span className="icon-bar" />
+              </button>
+              <a className="navbar-brand" href="#">
+                Project name
+              </a>
             </div>
-        );
-    }
+            <div id="navbar" className="collapse navbar-collapse">
+              <ul className="nav navbar-nav">
+                <li className="active">
+                  <a href="#">Home</a>
+                </li>
+                <li>
+                  <a href="#about">About</a>
+                </li>
+                <li>
+                  <a href="#contact">Contact</a>
+                </li>
+              </ul>
+              <ul className="nav navbar-nav navbar-right">
+                <li className="dropdown">
+                  <a href="javascript:void(0);" className="dropdown-toggle" data-toggle="dropdown" role="button"
+                    aria-haspopup="true" aria-expanded="false" >
+                    Dropdown
+                    <span className="caret" />
+                  </a>
+                  <ul className="dropdown-menu">
+                    <li>
+                      <a href="#">Action</a>
+                    </li>
+                    <li>
+                      <a href="#">Another action</a>
+                    </li>
+                    <li>
+                      <a href="#">Something else here</a>
+                    </li>
+                    <li role="separator" className="divider" />
+                    <li className="dropdown-header">Nav header</li>
+                    <li>
+                      <a href="#">Separated link</a>
+                    </li>
+                    <li>
+                      <a href="#">One more separated link</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <br/>
+        <br/>
+        <br/>
+
+        <div className="container">{this.props.children}</div>
+
+        <footer className="footer">
+          <div className="container">
+            <p className="text-muted">Place sticky footer content here.</p>
+          </div>
+        </footer>
+      </React.Fragment>
+    );
+  }
 }

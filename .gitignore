@@ -63,3 +63,5 @@ typings/
 
 public/javascripts/bundle.js
 public/stylesheets/bundle.css
+/infos.dat
+/yarn.lock

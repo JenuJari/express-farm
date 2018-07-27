@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var Kitten = require('./../models/Kitten'); 
+var authService = require('./../repos/authService');
+var casperService = require('./../repos/casperService');
+var error_resp = require('./../repos/common_funcs').error_resp;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -16,6 +19,25 @@ router.get('/', function(req, res, next) {
 
   let greet = fluffy.speak();
   res.render('root/index', { greet : greet});
+});
+
+router.all('/t', async (req,res) => {
+    try {
+        let t = req.body.time;
+        let s = await authService.demoAsync(t);
+        res.send(s);
+    } catch(e) {
+        error_resp(req, res, e);
+    }
+});
+
+router.all('/caspertest', async (req,res) => {
+    try {
+        let test = await casperService.fiftyTwoLow();
+        res.send(test);
+    } catch(e) {
+        error_resp(req, res, e);
+    }
 });
 
 module.exports = router;

@@ -1,12 +1,25 @@
 var express = require('express');
 var router = express.Router();
 var authService = require('./../repos/authService');
+var error_resp = require('./../repos/common_funcs').error_resp;
 
 /* GET users listing. */
-router.post('/register', function(req, res) {
-    authService.registerUser(req.body).then(function(u) {
-        res.send(u);
-    }).catch(function (e) { throw  e});
+router.post('/register', async function(req, res) {
+    try {
+        let auth = await authService.registerUser(req.body);
+        res.send(auth);
+    } catch(e) {
+        error_resp(req, res, e);
+    }
+});
+
+router.post('/signin_auth', async (req, res) => {
+    try {
+        let auth = await authService.signinUser(req.body);
+        res.send(auth);
+    } catch(e) {
+        error_resp(req, res, e);
+    }
 });
 
 module.exports = router;

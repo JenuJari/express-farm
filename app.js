@@ -31,8 +31,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/apis', async (req, res, next) => {
+    var common_funcs = require('./repos/common_funcs');
+    try {
+        let user = await common_funcs.get_user_from_auth(req.headers.authorization);
+        if( user && user._id ) {
+            req.user = user;
+            next();
+        }
+    } catch(e) {
+        common_funcs.error_resp(req, res, e);
+    }
+});
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/apis/users', usersRouter);
 app.use('/api/auth', authRouter);
 
 // catch 404 and forward to error handler

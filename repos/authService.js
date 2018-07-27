@@ -3,9 +3,7 @@ const User = require("./../models/User");
 const bcrypt = require("bcrypt");
 const md5 = require("md5");
 const moment = require("moment");
-moment()
-    .add("days", 5)
-    .toDate();
+
 const cryptPassword = password => {
     return new Promise((res, rej) => {
         bcrypt.genSalt(10, (e, salt) => {
@@ -25,7 +23,7 @@ const cryptPassword = password => {
     });
 };
 
-/*const comparePassword = (plainPass, hashword) => {
+const comparePassword = (plainPass, hashword) => {
     return new Promise((res, rej) => {
         bcrypt.compare(plainPass, hashword, (err, isPasswordMatch) => {
             if (err) {
@@ -35,34 +33,40 @@ const cryptPassword = password => {
             res(isPasswordMatch);
         });
     });
-};*/
+};
 
 module.exports = {
-    registerUser: data => {
-        return new Promise((res, rej) => {
-            cryptPassword(data.password.toString()).then(encpass => {
-                const user = new User({
-                    name: data.name,
-                    email: data.email,
-                    password: encpass
-                });
-
-                user
-                    .save()
-                    .then(user => {
-                        let token = md5(user._id);
-                        let expir = moment()
-                            .add("days", 5)
-                            .toDate();
-                        const auth = new Auth({
-                            token: token,
-                            userid: user._id,
-                            expriry: expir
-                        });
-                        auth.save().then(res).catch(rej);
-                    })
-                    .catch(rej);
-            });
+    registerUser: async data => {
+        let encpass = await cryptPassword(data.password.toString());
+        let user = new User({name: data.name, email: data.email, password: encpass });
+        user = await user.save();
+        let token = md5(user._id + '_' + moment().unix());
+        let expir = moment().add(5,"days").toDate(); 
+        let auth = new Auth({token: token, userid: user._id, expriry: expir });
+        auth = await auth.save();
+        return auth;
+    },
+    signinUser : async data => {
+        let user = await User.findOne({email: data.email});
+        if(user == null) throw new Error("User not found with provided email.");
+        let isPasswordMatch = await comparePassword(data.password,user.password);
+        if(isPasswordMatch == false) throw new Error("Password do not matched.");
+        let token = md5(user._id + '_' + moment().unix());
+        let expir = moment().add(5,"days").toDate(); 
+        let auth = new Auth({token: token, userid: user._id, expriry: expir });
+        auth = await auth.save();
+        return auth;
+    },
+    demoAsync : t => {
+        return new Promise((res,rej) => {
+            try {
+                setTimeout(() => {
+                    res('Your wait time ' + (t/1000) + ' sec is over.');
+                }, t);
+                 throw new Error('listId does not exist');
+            } catch(e) {
+                rej(e);
+            }
         });
     }
 };

@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prod_server_start": "pm2 start --env production",
+    "prod_server_restart": "pm2 reload --env production",
     "server_start": "pm2 start",
     "server_stop": "pm2 stop express_farm",
     "build": "cross-env NODE_ENV=development  webpack --mode=development  --no-progress --hide-modules --config webpack.dev.js",

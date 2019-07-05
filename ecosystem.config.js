@@ -4,6 +4,8 @@ module.exports = {
     script    : 'bin/www',
     watch: ["views", "repos", "routes", "models", "app.js"],
     ignore_watch : ["node_modules", "front_end"],
+    exec_mode : 'cluster',
+    instances : '2',
     watch_options: {
         usePolling: true,
         interval: 500,
@@ -13,7 +15,7 @@ module.exports = {
       NODE_ENV: 'development'
     },
     env_production : {
-      PORT: 8080,
+      PORT: 80,
       NODE_ENV: 'production'
     }
   }],

@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "now-build" : "yarn build",
+    "now-start" : "node bin/www",
     "prod_server_start": "pm2 start --env production",
     "prod_server_restart": "pm2 reload --env production",
     "server_start": "pm2 start",

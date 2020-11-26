@@ -11,40 +11,42 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 
-var dburl = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASS + '@' + process.env.MONGO_HOST + ':' + process.env.MONGO_PORT + '/' + process.env.MONGO_DBNAME;
-mongoose.connect(dburl, { useNewUrlParser: true });
+var dburl = 'mongodb+srv://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASS + '@' + process.env.MONGO_HOST + '/' + process.env.MONGO_DBNAME;
+mongoose.connect(dburl, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
-
 
 var app = express();
 
 // view engine setup
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.set('mongoose', mongoose);
 
+app.set('mongoose', mongoose);
+app.use(logger('dev'));
+
+app.use(cookieParser());
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
 
 app.use('/apis', async (req, res, next) => {
-    var common_funcs = require('./repos/common_funcs');
-    try {
-        let user = await common_funcs.get_user_from_auth(req.headers.authorization);
-        if( user && user._id ) {
-            req.user = user;
-            next();
-        }
-    } catch(e) {
-        common_funcs.error_resp(req, res, e);
+  var common_funcs = require('./repos/common_funcs');
+  try {
+    let user = await common_funcs.get_user_from_auth(req.headers.authorization);
+    if (user && user._id) {
+      req.user = user;
+      next();
     }
+  } catch (e) {
+    common_funcs.error_resp(req, res, e);
+  }
 });
 
 app.use('/', indexRouter);
+
+// API routes
 app.use('/apis/users', usersRouter);
 app.use('/api/auth', authRouter);
 
@@ -54,7 +56,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -72,7 +74,7 @@ db.on('error', function (err) {
 });
 
 db.once('open', function () {
-  //console.log('we're connected!');
+  console.log("Mongo DB Connected");
 });
 
 app.set('db', db);
